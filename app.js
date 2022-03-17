@@ -17,13 +17,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));   /* bodyParser.urlencoded() is deprecated */
 
 const db = require("./src/models");
-
 db.sequelize.sync();
-// drop the table if it already exists
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and re-sync db.");
-});
 
+
+const Employee = db.sahil_111915108_details;
+const Salary = db.sahil_111915108_salary;
 var err = '';
 const check = async () => {
   try {
@@ -35,10 +33,39 @@ const check = async () => {
     err = 'Connection has been established successfully.';
   }
 }
+app.set('view engine', 'ejs');
 
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to test application.", err });
+
+app.get('/', (req, res) => {
+  res.render('home');
+})
+app.get("/login", (req, res) => {
+  res.render('login');
 });
+
+
+
+app.get("/signup", (req, res) => {
+  res.render('signup');
+});
+
+app.post('/signup', async (req, res) => {
+  const { firstname, lastname, number, date, password } = req.body;
+  console.log(firstname, lastname, number, date, password);
+  try {
+    const newEmployee = {
+      first_name: firstname,
+      last_lame: lastname,
+      date_of_birth: date,
+      contact_number: number,
+      password: password
+    }
+    const createdEmployee = await Employee.create(newEmployee);
+    res.render('home')
+  } catch (error) {
+
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
