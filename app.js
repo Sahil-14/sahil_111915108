@@ -91,14 +91,22 @@ app.post('/signup', async (req, res) => {
 })
 
 app.get('/report/:id', async (req, res) => {
-  const Report = await Employee.findAll({
+
+  const Report = await Employee.findOne({
+
     where: { employee_id_number: req.params.id },
+    attributes: {
+      exclude: ['createdAt', 'updatedAt',]
+    },
     include: {
       model: Salary,
-      attributes: ['job_role', '	monthly_salary', 'yearly_bonus']
+      attributes: {
+        include: ['job_role']
+      }
     }
   });
-  res.status(200).send({ Report });
+  // const Salary = await Salary.findAll();
+  res.render('report', { report: Report });
 })
 app.post('/report', (req, res) => {
 
