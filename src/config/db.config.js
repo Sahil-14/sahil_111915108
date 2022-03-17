@@ -2,7 +2,7 @@ module.exports = {
   HOST: "localhost",
   USER: "root",
   PASSWORD: "root",
-  DB: "studentlogin",
+  DB: "sahil_111915108",
   dialect: "mysql",
   dialectOptions: {
     socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'

@@ -19,5 +19,13 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.users = require("./users.model.js")(sequelize, Sequelize);
+db.sahil_111915108_details = require("./employee.model.js")(sequelize, Sequelize);
+db.sahil_111915108_salary = require("./sallery.model.js")(sequelize, Sequelize);
+
+db.sahil_111915108_details.hasMany(db.sahil_111915108_salary, { foreignKey: 'employee_id_number' })
+db.sahil_111915108_salary.belongsTo(db.sahil_111915108_details, { foreignKey: 'employee_id_number' })
+
+
+
 
 module.exports = db;
