@@ -33,24 +33,39 @@ const check = async () => {
     err = 'Connection has been established successfully.';
   }
 }
+
 app.set('view engine', 'ejs');
 
 
 app.get('/', (req, res) => {
+
   res.render('home');
 })
 app.get("/login", (req, res) => {
   res.render('login');
 });
 
-
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  const first_name = username.toLowerCase();
+  console.log(username, password);
+  const existingUser = await Employee.findOne({ where: { first_name } });
+  if (!existingUser) {
+    return res.json({ message: 'Invalid Credentials' });
+  }
+  const passwordMatch = (existingUser.password == password);
+  if (!passwordMatch) {
+    return res.json({ message: 'Invalid Credentials' })
+  }
+  res.redirect('/');
+})
 
 app.get("/signup", (req, res) => {
   res.render('signup');
 });
 
 app.post('/signup', async (req, res) => {
-  const { firstname, lastname, number, date, password } = req.body;
+  const { firstname, lastname, number, date, password, job, salary, bonus } = req.body;
   console.log(firstname, lastname, number, date, password);
   try {
     const newEmployee = {
@@ -61,10 +76,32 @@ app.post('/signup', async (req, res) => {
       password: password
     }
     const createdEmployee = await Employee.create(newEmployee);
+    const employee_id_number = createdEmployee.employee_id_number;
+    const SalaryDetails = {
+      employee_id_number,
+      job_role: job,
+      monthly_salary: salary,
+      yearly_bonus: bonus
+    }
+    await Salary.create(SalaryDetails);
     res.render('home')
   } catch (error) {
-
+    res.json({ message: 'error to create employee' });
   }
+})
+
+app.get('/report/:id', async (req, res) => {
+  const Report = await Employee.findAll({
+    where: { employee_id_number: req.params.id },
+    include: {
+      model: Salary,
+      attributes: ['job_role', '	monthly_salary', 'yearly_bonus']
+    }
+  });
+  res.status(200).send({ Report });
+})
+app.post('/report', (req, res) => {
+
 })
 
 app.listen(PORT, () => {
