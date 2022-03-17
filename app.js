@@ -57,7 +57,8 @@ app.post('/login', async (req, res) => {
   if (!passwordMatch) {
     return res.json({ message: 'Invalid Credentials' })
   }
-  res.redirect('/');
+  const id = existingUser.employee_id_number
+  res.redirect(`/report/${id}`);
 })
 
 app.get("/signup", (req, res) => {
